@@ -13,8 +13,8 @@ static constexpr EOrder LED_ORDER = GRB;
 CRGB leds[NUM_LEDS];
 
 // ====== User config ======
-//static const char* TEXT_TO_TYPE = "Hello from ATOM!\n";  // ←送信したい文字列に変更
-static const char* TEXT_TO_TYPE = "Rvf78cccTempura$\n";  // ←送信したい文字列に変更
+static const char* TEXT_TO_TYPE = "Hello from ATOM!\n";  // ←送信したい文字列に変更
+
 
 static constexpr uint32_t DEBOUNCE_MS      = 40;
 static constexpr uint32_t LED_EVENT_MS     = 1000;
@@ -29,6 +29,9 @@ bool     lastRaw        = true;   // HIGH
 bool     stable         = true;
 uint32_t lastChangeMs   = 0;
 bool     pressedEdge    = false;
+
+
+unsigned long millis_buf=0;
 
 // ====== Mouse schedule / sequence ======
 uint32_t nextMouseMs = 0;
@@ -185,11 +188,15 @@ void setup()
 
 void loop()
 {
+  
   updateButton();
 
-  if (pressedEdge) {
+  if (pressedEdge) {    
     pressedEdge = false;
-    doKeyboardAction();
+    if (( millis() - millis_buf) > 1000) {
+      doKeyboardAction();
+      millis_buf = millis();
+    }
   }
 
   uint32_t now = millis();
